@@ -83,6 +83,12 @@ export async function listMedia(env, token) {
 
 // Private Reply: הודעה פרטית אחת למי שהגיב, עד 7 ימים מהתגובה
 // הודעה עם כפתור (Button Template) אם הוגדר כפתור, אחרת טקסט רגיל
+// תמונה עדכנית לפוסט: הקישורים ששמורים ב-media_thumb פגים אחרי כמה ימים
+export async function getThumb(env, token, id) {
+  const p = new URLSearchParams({ fields: 'media_type,media_url,thumbnail_url', access_token: token });
+  return call(graph(env, `/${id}?${p}`));
+}
+
 export function buildMessage(text, button) {
   if (!button?.url) return { text };
   return {

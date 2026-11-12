@@ -40,8 +40,10 @@ const ago = (t) => {
   const h = Math.round(m / 60);
   return h < 24 ? `לפני ${h} ש׳` : day(t);
 };
-// קישורי התמונות של אינסטגרם פגים אחרי כמה ימים, אז תמונה שלא נטענה פשוט נעלמת
-const thumbImg = (r) => (r.media_thumb ? `<img src="${esc(r.media_thumb)}" alt="" loading="lazy" onerror="this.remove()">` : '');
+// התמונה נטענת דרך /admin/thumb, שמביא קישור עדכני (הקישורים השמורים פגים אחרי כמה ימים)
+const thumbImg = (r) => (r.media_id
+  ? `<img src="/admin/thumb?id=${encodeURIComponent(r.media_id)}" alt="" loading="lazy" onerror="this.remove()">`
+  : '');
 const where = (r) => (r.source === 'comment'
   ? (r.media_id ? r.media_label || 'ריל ספציפי' : 'כל הפוסטים והרילס')
   : r.source === 'story' ? 'כל הסטוריז' : 'כל ההודעות');

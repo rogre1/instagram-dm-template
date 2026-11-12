@@ -30,6 +30,7 @@ export default {
         });
       }
       if (path === '/connect') return connect(url, env);
+      if (path === '/admin/thumb') return thumb(url, env);
       if (request.method === 'POST') {
         if (!sameOrigin(request, url)) return new Response('bad origin', { status: 403 });
         return adminAction(request, env);
@@ -235,6 +236,21 @@ async function renderAdmin(url, env) {
   }
   const sentByRule = Object.fromEntries(counts.results.map((r) => [r.rule_id, r.n]));
   return html(adminPage({ s, rules, recent, sentByRule, pending, media, mediaError, msg: url.searchParams.get('msg'), env }));
+}
+
+// מפנה לתמונה עדכנית מאינסטגרם, כדי שהתמונות בדף הניהול לא יישברו אחרי כמה ימים
+async function thumb(url, env) {
+  const id = url.searchParams.get('id') || '';
+  const s = await getSettings(env);
+  if (!/^\d+$/.test(id) || !s.token) return new Response(null, { status: 404 });
+  try {
+    const m = await meta.getThumb(env, s.token, id);
+    const src = m.thumbnail_url || (m.media_type !== 'VIDEO' ? m.media_url : null);
+    if (!src) return new Response(null, { status: 404 });
+    return new Response(null, { status: 302, headers: { Location: src, 'Cache-Control': 'private, max-age=3600' } });
+  } catch {
+    return new Response(null, { status: 404, headers: { 'Cache-Control': 'private, max-age=3600' } });
+  }
 }
 
 async function adminAction(request, env) {

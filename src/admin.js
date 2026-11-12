@@ -148,7 +148,7 @@ export function adminPage({ s, rules, recent, sentByRule, pending, media, mediaE
     <h2>החוקים שלי</h2>
     ${rules.length ? rules.map((r) => `
       <div class="rule ${r.active ? '' : 'off-rule'}">
-        ${r.media_thumb ? `<img src="${esc(r.media_thumb)}" alt="">` : ''}
+        ${r.media_id ? `<img src="/admin/thumb?id=${encodeURIComponent(r.media_id)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
         <div class="body">
           <div><span class="kw">${esc(r.keyword)}</span> · <span class="hint">${SOURCE_LABEL[r.source] || ''}${r.source === 'comment' ? (r.media_id ? ` · ${esc(r.media_label || 'ריל ספציפי')}` : ' · כל הפוסטים') : ''}</span></div>
           <div class="msg">${esc(r.message)}</div>
